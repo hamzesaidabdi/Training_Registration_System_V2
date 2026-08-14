@@ -214,6 +214,44 @@ body{
 
 
 
+/* أزرار الإجراءات */
+
+.action-buttons{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:5px;
+
+    flex-wrap:wrap;
+
+}
+
+
+
+/* زر الشهادة */
+
+.btn-certificate{
+
+    background:#198754;
+
+    color:white;
+
+    border:none;
+
+}
+
+
+
+.btn-certificate:hover{
+
+    background:#157347;
+
+    color:white;
+
+}
+
 
 
 </style>
@@ -328,6 +366,8 @@ Training Registration System
 
 
 
+
+
 <div class="col-md-4">
 
 
@@ -352,6 +392,8 @@ Training Registration System
 
 
 </div>
+
+
 
 
 
@@ -392,6 +434,10 @@ Training Registration System
 
 
 
+
+
+
+
 <div class="table-box">
 
 
@@ -416,6 +462,9 @@ Training Registration System
 
 
 </div>
+
+
+
 
 
 
@@ -579,6 +628,20 @@ class="profile-img">
 
 
 
+<div class="action-buttons">
+
+
+
+<a href="/certificate/{{ t.id }}"
+
+class="btn btn-certificate btn-sm">
+
+🎓 الشهادة
+
+</a>
+
+
+
 <a href="/edit/{{t.id}}" class="btn btn-warning btn-sm">
 
 تعديل
@@ -596,6 +659,10 @@ onclick="return confirm('هل تريد حذف المتدرب؟')">
 حذف
 
 </a>
+
+
+
+</div>
 
 
 
@@ -631,6 +698,7 @@ onclick="return confirm('هل تريد حذف المتدرب؟')">
 
 
 </div>
+
 
 
 

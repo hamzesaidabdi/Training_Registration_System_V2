@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 import os
 from werkzeug.utils import secure_filename
 
@@ -21,8 +22,11 @@ UPLOAD_FOLDER = "static/uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 
-db = SQLAlchemy(app)
+# إنشاء مجلد رفع الصور إذا لم يكن موجودًا
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+
+db = SQLAlchemy(app)
 
 
 # ==========================
@@ -88,10 +92,46 @@ class Trainee(db.Model):
     )
 
 
+    # عدد ساعات التدريب
+    training_hours = db.Column(
+        db.String(20)
+    )
+
+
     image = db.Column(
         db.String(200)
     )
 
+
+# ==========================
+# تحديث قاعدة البيانات
+# ==========================
+
+def update_database():
+
+    with app.app_context():
+
+        # إنشاء الجداول إذا لم تكن موجودة
+        db.create_all()
+
+        # فحص أعمدة جدول trainee
+        result = db.session.execute(
+            text("PRAGMA table_info(trainee)")
+        )
+
+        columns = [row[1] for row in result]
+
+        # إضافة حقل ساعات التدريب إذا لم يكن موجودًا
+        if "training_hours" not in columns:
+
+            db.session.execute(
+                text(
+                    "ALTER TABLE trainee "
+                    "ADD COLUMN training_hours VARCHAR(20)"
+                )
+            )
+
+            db.session.commit()
 
 
 # ==========================
@@ -195,6 +235,12 @@ def add_trainee():
 
             supervisor=request.form["supervisor"],
 
+            # عدد ساعات التدريب
+            training_hours=request.form.get(
+                "training_hours",
+                ""
+            ),
+
             image=filename
 
         )
@@ -213,7 +259,8 @@ def add_trainee():
     return render_template(
         "add_trainee.html"
     )
-    
+
+
 # ==========================
 # تعديل متدرب
 # ==========================
@@ -248,6 +295,12 @@ def edit_trainee(id):
         trainee.status = request.form["status"]
 
         trainee.supervisor = request.form["supervisor"]
+
+        # عدد ساعات التدريب
+        trainee.training_hours = request.form.get(
+            "training_hours",
+            ""
+        )
 
 
 
@@ -317,7 +370,19 @@ def delete_trainee(id):
         url_for("dashboard")
     )
 
+# ==========================
+# شهادة المتدرب
+# ==========================
 
+@app.route("/certificate/<int:id>")
+def certificate(id):
+
+    trainee = Trainee.query.get_or_404(id)
+
+    return render_template(
+        "certificate.html",
+        trainee=trainee
+    )
 
 # ==========================
 # تشغيل النظام
@@ -326,10 +391,7 @@ def delete_trainee(id):
 if __name__ == "__main__":
 
 
-    with app.app_context():
-
-        db.create_all()
-
+    update_database()
 
 
     app.run(

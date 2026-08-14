@@ -441,12 +441,37 @@ value="{{ trainee.supervisor }}">
 </div>
 
 
+<!-- عدد ساعات التدريب -->
+
+<div class="col-md-6 mb-3">
+
+<label>
+
+عدد ساعات التدريب
+
+</label>
+
+<input
+
+type="number"
+
+name="training_hours"
+
+class="form-control"
+
+min="0"
+
+value="{{ trainee.training_hours or '' }}"
+
+placeholder="مثال: 120">
+
+</div>
 
 
 
 
 
-<div class="col-md-12 mb-4">
+<div class="col-md-6 mb-4">
 
 
 <label>
@@ -486,8 +511,6 @@ class="form-control">
 
 
 </div>
-
-
 
 
 
